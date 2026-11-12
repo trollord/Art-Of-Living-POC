@@ -27,6 +27,6 @@ export class OrdersController {
   @Post(':id/pay')
   @HttpCode(200)
   pay(@Param('id') id: string, @Body() dto: PayOrderDto) {
-    return this.ordersService.pay(id, dto.method);
+    return this.ordersService.pay(id, dto.method, dto.token);
   }
 }

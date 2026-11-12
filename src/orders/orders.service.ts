@@ -4,7 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { randomInt } from 'node:crypto';
+import { createHmac, randomInt, timingSafeEqual } from 'node:crypto';
 import QRCode from 'qrcode';
 import { ProductsService } from '../products/products.service.js';
 import { CreateOrderDto } from './dto/create-order.dto.js';
@@ -14,11 +14,11 @@ import { Order, Quote, QuoteLine } from './order.model.js';
 
 const DEMO_VPA = 'artofliving.demo@upi';
 const PAYEE_NAME = 'Art of Living IP Supplies (Demo)';
+const DEMO_ORDER_SECRET = 'aol-ip-supplies-demo-order-secret';
 
 @Injectable()
 export class OrdersService {
   private readonly orders = new Map<string, Order>();
-  private sequence = 0;
 
   constructor(private readonly productsService: ProductsService) {}
 
@@ -73,7 +73,7 @@ export class OrdersService {
     };
   }
 
-  async create(dto: CreateOrderDto): Promise<Order> {
+  async create(dto: CreateOrderDto): Promise<Order & { token: string }> {
     const quote = this.quote(dto.items);
     if (quote.lines.length === 0) {
       throw new BadRequestException('Your cart is empty. Add at least one product.');
@@ -117,7 +117,7 @@ export class OrdersService {
       upi: { vpa: DEMO_VPA, payeeName: PAYEE_NAME, link, qrDataUrl },
     };
     this.orders.set(id, order);
-    return order;
+    return { ...order, token: this.sign(order) };
   }
 
   findOne(id: string): Order {
@@ -128,8 +128,8 @@ export class OrdersService {
     return order;
   }
 
-  pay(id: string, method: PaymentMethod): Order {
-    const order = this.findOne(id);
+  pay(id: string, method: PaymentMethod, token?: string): Order {
+    const order = this.orders.get(id.toUpperCase()) ?? this.restore(id, token);
     if (order.status === 'PAID') {
       throw new ConflictException(`Order ${order.id} is already paid`);
     }
@@ -142,10 +142,61 @@ export class OrdersService {
     return order;
   }
 
+  private restore(id: string, token?: string): Order {
+    if (!token) {
+      throw new NotFoundException(`Order ${id} was not found`);
+    }
+    const [payload, signature] = token.split('.');
+    if (!payload || !signature || !this.verify(payload, signature)) {
+      throw new BadRequestException(
+        'Order token is invalid or has been tampered with.',
+      );
+    }
+    let order: Order;
+    try {
+      order = JSON.parse(
+        Buffer.from(payload, 'base64url').toString('utf8'),
+      ) as Order;
+    } catch {
+      throw new BadRequestException(
+        'Order token is invalid or has been tampered with.',
+      );
+    }
+    if (order?.id !== id.toUpperCase()) {
+      throw new BadRequestException(
+        `Order token does not belong to order ${id}.`,
+      );
+    }
+    this.orders.set(order.id, order);
+    return order;
+  }
+
+  private sign(order: Order): string {
+    const payload = Buffer.from(JSON.stringify(order)).toString('base64url');
+    return `${payload}.${this.hmac(payload)}`;
+  }
+
+  private verify(payload: string, signature: string): boolean {
+    const expected = Buffer.from(this.hmac(payload));
+    const actual = Buffer.from(signature);
+    return (
+      expected.length === actual.length && timingSafeEqual(expected, actual)
+    );
+  }
+
+  private hmac(payload: string): string {
+    return createHmac('sha256', process.env.ORDER_SECRET || DEMO_ORDER_SECRET)
+      .update(payload)
+      .digest('base64url');
+  }
+
   private nextId(): string {
-    this.sequence += 1;
     const year = new Date().getFullYear();
-    return `AOL-IP-${year}-${String(this.sequence).padStart(4, '0')}`;
+    const time = Date.now().toString(36).slice(-3);
+    const random = randomInt(0, 36 ** 3)
+      .toString(36)
+      .padStart(3, '0');
+    return `AOL-IP-${year}-${(time + random).toUpperCase()}`;
   }
 
   private upiReference(): string {

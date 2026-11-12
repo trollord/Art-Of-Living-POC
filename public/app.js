@@ -42,6 +42,7 @@
     details: {},
     orderId: null,
     order: null,
+    token: null,
     quote: null,
     quoteError: null,
   };
@@ -56,6 +57,8 @@
         state.step = STEPS.some((s) => s.id === saved.step) ? saved.step : 'products';
         state.details = saved.details && typeof saved.details === 'object' ? saved.details : {};
         state.orderId = typeof saved.orderId === 'string' ? saved.orderId : null;
+        state.token = typeof saved.token === 'string' ? saved.token : null;
+        state.order = saved.order && typeof saved.order === 'object' && saved.order.id === state.orderId ? saved.order : null;
       }
     } catch {
       state.cart = {};
@@ -66,7 +69,7 @@
     try {
       localStorage.setItem(
         STORAGE_KEY,
-        JSON.stringify({ cart: state.cart, step: state.step, details: state.details, orderId: state.orderId }),
+        JSON.stringify({ cart: state.cart, step: state.step, details: state.details, orderId: state.orderId, order: state.order, token: state.token }),
       );
     } catch {
       return;
@@ -796,8 +799,10 @@
           },
         },
       });
-      state.order = order;
+      const { token, ...created } = order;
+      state.order = created;
       state.orderId = order.id;
+      state.token = token;
       snack(`Order ${order.id} created. Complete the payment to confirm.`, 'success');
       await goTo('payment');
     } catch (err) {
@@ -824,10 +829,11 @@
     $('.processing-card', overlay).focus();
     try {
       const [order] = await Promise.all([
-        api(`/orders/${encodeURIComponent(state.order.id)}/pay`, { method: 'POST', body: { method } }),
+        api(`/orders/${encodeURIComponent(state.order.id)}/pay`, { method: 'POST', body: { method, ...(state.token ? { token: state.token } : {}) } }),
         new Promise((r) => setTimeout(r, PROCESSING_MS)),
       ]);
       state.order = order;
+      state.token = null;
       state.cart = {};
       state.selection = {};
       state.quote = null;
@@ -850,6 +856,7 @@
     state.selection = {};
     state.order = null;
     state.orderId = null;
+    state.token = null;
     state.quote = null;
     state.quoteError = null;
     state.step = 'products';
@@ -964,12 +971,17 @@
 
     if ((state.step === 'payment' || state.step === 'confirmation') && state.orderId) {
       try {
-        state.order = await api(`/orders/${encodeURIComponent(state.orderId)}`);
+        const saved = state.order;
+        state.order = await api(`/orders/${encodeURIComponent(state.orderId)}`).catch((err) => {
+          if (saved && (saved.status === 'PAID' || state.token)) return saved;
+          throw err;
+        });
         if (state.step === 'payment' && state.order.status === 'PAID') state.step = 'confirmation';
         if (state.step === 'confirmation' && state.order.status !== 'PAID') state.step = 'payment';
       } catch {
         state.order = null;
         state.orderId = null;
+        state.token = null;
         state.step = cartItems().length ? 'details' : 'products';
         snack('Your previous order session expired. Please review and continue.', 'info', 5000);
       }

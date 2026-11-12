@@ -31,4 +31,4 @@ async function bootstrap() {
   await app.listen(port);
   console.log(`AOL IP Supplies running at http://localhost:${port}`);
 }
-await bootstrap();
+void bootstrap();
