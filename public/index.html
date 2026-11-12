@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IP Teacher Supplies | Art of Living</title>
+  <meta name="description" content="Order Intuition Process blindfolds for your programme. Art of Living teacher supplies portal (demo).">
+  <meta name="theme-color" content="#ECA55A">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300..700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#" data-goto="products" aria-label="Art of Living, Intuition Process Teacher Supplies home">
+        <img class="brand-logo" src="https://www.artofliving.org/in-en/app/themes/artofliving/assets/images/logo.svg" alt="Art of Living" width="112" height="44">
+        <span class="brand-fallback" hidden>The Art of Living</span>
+        <span class="brand-divider" aria-hidden="true"></span>
+        <span class="brand-title">
+          <span class="brand-title-main">Intuition Process</span>
+          <span class="brand-title-sub">Teacher Supplies</span>
+        </span>
+      </a>
+      <button class="cart-button" type="button" data-goto="cart" aria-label="View cart, 0 items">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M3 4h2.2l2.1 10.2a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 1.9-1.5L20.5 8H6.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="19.5" r="1.4" fill="currentColor"/><circle cx="17" cy="19.5" r="1.4" fill="currentColor"/></svg>
+        <span class="cart-button-label">Cart</span>
+        <span class="cart-count" data-count="0">0</span>
+      </button>
+    </div>
+  </header>
+
+  <nav class="stepper-wrap" aria-label="Order progress">
+    <ol class="stepper container" id="stepper"></ol>
+  </nav>
+
+  <main id="main" tabindex="-1">
+    <section class="step" data-step="products" aria-labelledby="products-title" hidden>
+      <div class="hero">
+        <div class="container hero-inner">
+          <p class="eyebrow">For Art of Living teachers</p>
+          <h1 id="products-title">Order blindfolds for your Intuition Process programme</h1>
+          <p class="hero-lead">Choose your quantities, see the exact amount instantly and pay by UPI. No more calculating totals or attaching screenshots.</p>
+          <ul class="hero-points" aria-label="How it works">
+            <li><span class="hero-point-num">1</span>Pick quantities</li>
+            <li><span class="hero-point-num">2</span>Add delivery details</li>
+            <li><span class="hero-point-num">3</span>Pay with Google Pay or UPI</li>
+          </ul>
+        </div>
+        <svg class="hero-art" viewBox="0 0 400 400" aria-hidden="true">
+          <circle cx="200" cy="200" r="180" fill="none" stroke="currentColor" stroke-width="1"/>
+          <circle cx="200" cy="200" r="140" fill="none" stroke="currentColor" stroke-width="1"/>
+          <circle cx="200" cy="200" r="100" fill="none" stroke="currentColor" stroke-width="1"/>
+          <circle cx="200" cy="200" r="60" fill="none" stroke="currentColor" stroke-width="1"/>
+        </svg>
+      </div>
+      <div class="container">
+        <div class="product-grid" id="product-grid" aria-busy="true"></div>
+      </div>
+    </section>
+
+    <section class="step" data-step="cart" aria-labelledby="cart-title" hidden>
+      <div class="container page-pad">
+        <div class="page-head">
+          <h1 id="cart-title">Your cart</h1>
+          <p class="page-sub">Adjust quantities below. Prices update automatically.</p>
+        </div>
+        <div class="two-col">
+          <div class="panel" id="cart-lines"></div>
+          <aside class="panel summary" id="cart-summary" aria-label="Order summary"></aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="step" data-step="details" aria-labelledby="details-title" hidden>
+      <div class="container page-pad">
+        <div class="page-head">
+          <h1 id="details-title">Teacher &amp; delivery details</h1>
+          <p class="page-sub">We will use these to confirm your order and ship the blindfolds.</p>
+        </div>
+        <div class="two-col">
+          <form class="panel form" id="details-form" novalidate>
+            <fieldset>
+              <legend>Teacher</legend>
+              <div class="field-grid">
+                <div class="field field-full">
+                  <label for="f-name">Full name <span class="req" aria-hidden="true">*</span></label>
+                  <input id="f-name" name="name" type="text" autocomplete="name" required maxlength="80">
+                  <p class="field-error" id="f-name-error" aria-live="polite"></p>
+                </div>
+                <div class="field">
+                  <label for="f-phone">Mobile number <span class="req" aria-hidden="true">*</span></label>
+                  <div class="input-prefix">
+                    <span aria-hidden="true">+91</span>
+                    <input id="f-phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel-national" required maxlength="14" placeholder="98765 43210">
+                  </div>
+                  <p class="field-error" id="f-phone-error" aria-live="polite"></p>
+                </div>
+                <div class="field">
+                  <label for="f-email">Email <span class="req" aria-hidden="true">*</span></label>
+                  <input id="f-email" name="email" type="email" autocomplete="email" required maxlength="120" placeholder="you@example.com">
+                  <p class="field-error" id="f-email-error" aria-live="polite"></p>
+                </div>
+                <div class="field">
+                  <label for="f-teacherCode">Teacher code <span class="opt">(optional)</span></label>
+                  <input id="f-teacherCode" name="teacherCode" type="text" maxlength="30" autocomplete="off" placeholder="e.g. TTC-12345">
+                  <p class="field-error" id="f-teacherCode-error" aria-live="polite"></p>
+                </div>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>Delivery address</legend>
+              <div class="field-grid">
+                <div class="field field-full">
+                  <label for="f-line1">Address line 1 <span class="req" aria-hidden="true">*</span></label>
+                  <input id="f-line1" name="line1" type="text" autocomplete="address-line1" required maxlength="120" placeholder="House / flat no., building, street">
+                  <p class="field-error" id="f-line1-error" aria-live="polite"></p>
+                </div>
+                <div class="field field-full">
+                  <label for="f-line2">Address line 2 <span class="opt">(optional)</span></label>
+                  <input id="f-line2" name="line2" type="text" autocomplete="address-line2" maxlength="120" placeholder="Area, landmark">
+                  <p class="field-error" id="f-line2-error" aria-live="polite"></p>
+                </div>
+                <div class="field">
+                  <label for="f-city">City <span class="req" aria-hidden="true">*</span></label>
+                  <input id="f-city" name="city" type="text" autocomplete="address-level2" required maxlength="60">
+                  <p class="field-error" id="f-city-error" aria-live="polite"></p>
+                </div>
+                <div class="field">
+                  <label for="f-state">State / UT <span class="req" aria-hidden="true">*</span></label>
+                  <select id="f-state" name="state" autocomplete="address-level1" required>
+                    <option value="">Select state</option>
+                  </select>
+                  <p class="field-error" id="f-state-error" aria-live="polite"></p>
+                </div>
+                <div class="field">
+                  <label for="f-pincode">Pincode <span class="req" aria-hidden="true">*</span></label>
+                  <input id="f-pincode" name="pincode" type="text" inputmode="numeric" autocomplete="postal-code" required maxlength="6" placeholder="6 digits">
+                  <p class="field-error" id="f-pincode-error" aria-live="polite"></p>
+                </div>
+              </div>
+            </fieldset>
+            <div class="form-actions">
+              <button type="button" class="btn btn-ghost" data-goto="cart">Back to cart</button>
+              <button type="submit" class="btn btn-primary" id="details-submit">Continue to payment</button>
+            </div>
+          </form>
+          <aside class="panel summary" id="details-summary" aria-label="Order summary"></aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="step" data-step="payment" aria-labelledby="payment-title" hidden>
+      <div class="container page-pad">
+        <div class="page-head">
+          <h1 id="payment-title">Payment</h1>
+          <p class="page-sub" id="payment-sub"></p>
+        </div>
+        <div class="two-col two-col-pay">
+          <div class="panel pay-panel" id="pay-panel"></div>
+          <aside class="panel summary" id="payment-summary" aria-label="Order summary"></aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="step" data-step="confirmation" aria-labelledby="confirm-title" hidden>
+      <div class="container page-pad" id="confirmation"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <p class="footer-title">The Art of Living</p>
+        <p>Intuition Process &middot; Teacher Supplies</p>
+      </div>
+      <p class="footer-note">Demo portal for stakeholder review. Orders are held in memory and no real payment is collected.</p>
+      <p class="footer-copy">&copy; <span id="year">2026</span> The Art of Living. Supplies for authorised teachers only.</p>
+    </div>
+  </footer>
+
+  <div class="snackbar-host" id="snackbars" role="region" aria-label="Notifications" aria-live="polite"></div>
+
+  <div class="processing" id="processing" hidden role="alertdialog" aria-modal="true" aria-labelledby="processing-title" aria-describedby="processing-text">
+    <div class="processing-card">
+      <div class="spinner" aria-hidden="true"></div>
+      <p class="processing-title" id="processing-title">Processing payment</p>
+      <p class="processing-text" id="processing-text">Waiting for confirmation from your UPI app&hellip;</p>
+    </div>
+  </div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
